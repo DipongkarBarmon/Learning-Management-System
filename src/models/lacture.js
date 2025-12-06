@@ -9,6 +9,11 @@ const lectureSchema=new mongoose.Schema({
       type:String,
       required:true,
     },
+    resourseType:{
+       type:String,
+       emum:['vedio','audio','picture','document'],
+       retuired:true
+    },
     resource:{
        type:String,
        required:true

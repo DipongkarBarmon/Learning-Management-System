@@ -149,85 +149,131 @@ const updateImage=asyncHandler(async(req,res)=>{
    .json(
      new apiResponse(200,course,"Image update successfully!")
    )
-   
-})
-
-const deleteCourse=asyncHandler(async(req,res)=>{
-    const id = req.params.id;
-    const course = await Course.findOne({ _id: id, createdBy: req.user._id });
-    if(!course){
-       throw new apiError(403, "You are not allowed to delete this course!");
-    }
-    await Course.findByIdAndDelete(id);
-     return res.status(200).json(
-      new apiResponse(200, null, "Course deleted successfully")
-    );
 
 })
+
+// const deleteCourse=asyncHandler(async(req,res)=>{
+//     const id = req.params.id;
+//     const course = await Course.findOne({ _id: id, createdBy: req.user._id });
+//     if(!course){
+//        throw new apiError(403, "You are not allowed to delete this course!");
+//     }
+//     await Course.findByIdAndDelete(id);
+//      return res.status(200).json(
+//       new apiResponse(200, null, "Course deleted successfully")
+//     );
+
+// })
 
 
 const addLectureHandler=asyncHandler(async(req,res)=>{
-    const { title, description} = req.body || {};
-    const courseId=req.params
-   if (!title || !description) {
-     throw new apiError(400, "All fields are required: title, description");
-   }
-      const resourceLocalPath=req.file?.path;
-        if(!resourceLocalPath){ 
-          throw new apiError(400,"Resourse files is required!")
-        }
-     const user =await User.findById(req.user._id).select('-password -refreshToken')
-      if(user.role==='student'){
-          throw new apiError(401,"Student cann't get access to add course")
-      }
-        const resource=await uploadOnCloudinary(resourceLocalPath);
-        if(!resource){
+    const { title, description,resourseType} = req.body || {};
+
+    const courseId = req.params.couserId || req.params.courseId || req.params.id;
+
+    if (!title || !description ||!resourseType) {
+       throw new apiError(400, "All fields are required: title, description");
+    }
+
+    const resourceLocalPath=req.file?.path;
+
+    if(!resourceLocalPath){ 
+        throw new apiError(400,"Resourse files is required!")
+     }
+
+    const user =await User.findById(req.user._id).select('-password -refreshToken')
+    
+    if(!user){
+      throw new apiError(404,"User is not found!")
+    }
+
+    if(user.role==='student'){
+        throw new apiError(401,"Student cann't get access to add course")
+    }
+    
+    const course = await Course.findById(courseId);
+
+    if(!course){
+        throw new apiError(401,"Course ID is invalid ")
+    }
+
+    const resource=await uploadOnCloudinary(resourceLocalPath);
+
+    if(!resource){
       throw new apiError(400,"Resourse files is required!")
-      }
+    }
 
     const createLecture=await Lecture.create({
-        couserId:courseId,
-        title,
-        description,
-        resource:resource.url,
-      })
-      const findLecture=await Lecture.findById(createLecture._id);
-      if(!findLecture){
-        throw new apiError(500,"Something was wrong while create Lecture!")
-      }
+      couserId: courseId,
+      title,
+      description,
+      resourseType,
+      resource:resource.url,
+    })
     
-      res.status(201).json(
-          new apiResponse(200,"Lecture create successfully!") 
-      )
+
+    const findLecture=await Lecture.findById(createLecture._id);
+
+    if(!findLecture){
+      throw new apiError(500,"Something was wrong while create Lecture!")
+    }
+    
+    res.status(201).json(
+        new apiResponse(200,findLecture,"Lecture create successfully!") 
+    )
     
 })
 
 const updateLactureInfo=asyncHandler(async(req,res)=>{
+
   const allfeilds =["title","description"];
   const updatefeilds ={};
+
   try {
+
     const body = req.body||{};
+
     allfeilds.forEach((info)=>{
       if (body[info] !== undefined && body[info] !== null && `${body[info]}` !== "") {
         updatefeilds[info] = body[info];
       }
     })
+
     const objectLength = Object.keys(updatefeilds).length;
+
     if (objectLength === 0) {
       throw new apiError(400, "No fields provided to update!");
     }
-    const { courseId, couserId } = req.params;
-    const courseIdValue = courseId || couserId;
+
+    const {courseId} =body
+ 
+
     const lecture = await Lecture.findByIdAndUpdate(
-      { _id: req.params.id, courseId: courseIdValue },
-      { $set: { ...updatefeilds } },
-      { new: true }
+      { 
+        _id: req.params.id,
+         courseId
+
+      },
+      { 
+        $set: { ...updatefeilds } 
+      },
+      { 
+        new: true
+      }
     )
+     
+    if(!lecture){
+      throw new apiError(404,"Lecture is not found!")
+    }
+
     return res.status(200).json(
       new apiResponse(200, lecture, "Information update successfully")
     )
+
   } catch (error) {
+
     throw new apiError(error.statusCode || 500, error.message);
+
   }
 })
 
@@ -237,28 +283,44 @@ const updateResource=asyncHandler(async(req,res)=>{
    //upload into cloudinary
    //then update user by req.user?._id
    //return res
-   const { id, courseId } = req.params;
+
+   const {lectureId,couserId,resourseType} = req.body;
 
    const resourceLocalPath=req.file?.path;
+
    if(!resourceLocalPath){
       throw new apiError(400,"Resource file is not found!");
    }
-   const lacturefind=await Lecture.findOne({_id:id,courseId});
-   if(!lacturefind?.resource){
-      throw new apiError(400,"Resource file is missing in DB!")
+   console.log(lectureId)
+   console.log(couserId)
+   const lecture=await Lecture.findOne({_id:lectureId,couserId});
+  
+   if (!lecture) {
+    throw new apiError(404, "Lecture not found!");
+  }
+
+
+   if(!lecture?.resource){
+      throw new apiError(400, "No previous resource found in DB!");
    }
-  const deleteResourse = await deleteOnCloudinary(lacturefind.resource);
+
+  const deleteResourse = await deleteOnCloudinary(lecture?.resource);
+
    if(!deleteResourse){
-       throw new apiError(400, 'Failed to delete previous resource from Cloudinary');
+       throw new apiError(400, "Failed to delete previous resource from Cloudinary");
    }    
+
    const resource=await uploadOnCloudinary(resourceLocalPath);
+
    if(!resource.url){
-      throw new apiError(400,"resource file is missing!")
+      throw new apiError(400, "Failed to upload resource!");
    }
-   const lacture =await Lecture.findByIdAndUpdate(
-     {_id:id,courseId},
+   
+   const updatelacture =await Lecture.findByIdAndUpdate(
+      { _id: lectureId, courseId:couserId},
      {
       $set:{
+         resourseType:resourseType,
          resource:resource.url
       }
      },{
@@ -267,27 +329,31 @@ const updateResource=asyncHandler(async(req,res)=>{
    )
    return res.status(200)
    .json(
-     new apiResponse(200,lacture,"Resource update successfully!")
+     new apiResponse(200,updatelacture,"Resource update successfully!")
    )
 })
 
-const deleteLecture=asyncHandler(async(req,res)=>{
-    const {id,courseId}=req.params;
-    const lacture=Lecture.findOne(
-      {_id:id,courseId}
-    )
-    if(!lacture){
-       throw new apiError(403, "You are not allowed to delete this course!");
-    }
-    await Lecture.findByIdAndDelete(id);
-     return res.status(200).json(
-      new apiResponse(200, null, "Course deleted successfully")
-    );
+// const deleteLecture = asyncHandler(async (req, res) => {
+//   const { couserId, id } = req.params;
 
-})
+//   // Optional: validate ObjectId
+//   if (!id || !couserId) {
+//     throw new apiError(400, "couserId and id are required in params");
+//   }
+
+//   const lecture = await Lecture.findOne({ _id: id, courseId: couserId });
+//   if (!lecture) {
+//     throw new apiError(404, "Lecture not found or access denied!");
+//   }
+
+//   await Lecture.findByIdAndDelete(id);
+//   return res.status(200).json(
+//     new apiResponse(200, null, "Lecture deleted successfully")
+//   );
+// });
 
 const toEnrolledCourse=asyncHandler(async(req,res)=>{
-      const courseId=req.params;
+      const courseId = req.params.id || req.params.courseId;
       const {secretKey}=req.body
       if(!secretKey){
         throw new apiError(400,"Secret key is required!")
@@ -300,7 +366,7 @@ const toEnrolledCourse=asyncHandler(async(req,res)=>{
       if(!isTrue){
            throw new apiError(400,"Secret key is not valid!")
       }
-      const course=await Course.findById(courseId);
+      const course = await Course.findById(courseId);
       if(!course){
          throw new apiError(404,"Course is not found")
       }
@@ -319,11 +385,11 @@ export {
    addCourseHandler,
    updatecourseInfo,
    updateImage,
-   deleteCourse,
+  //  deleteCourse,
    addLectureHandler,
    updateLactureInfo,
    updateResource,
-   deleteLecture,
+   //deleteLecture,
    toEnrolledCourse
 
 }

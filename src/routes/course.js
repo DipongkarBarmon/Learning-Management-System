@@ -15,9 +15,9 @@ import { upload } from "../middlewares/multer.js";
    
 const router=Router();
 
-router.route('/add-course').post(varifyJwt,upload.any(),addCourseHandler)
+router.route('/add-course').post(varifyJwt,upload.single('image'),addCourseHandler)
 router.route('/updatecourseInfor/:id').patch(varifyJwt,upload.none(),updatecourseInfo)
-router.route('/updatecourseImage/:id').patch(varifyJwt,upload.any(),updateImage)
+router.route('/updatecourseImage/:id').patch(varifyJwt,upload.single('image'),updateImage)
 router.route('/deleteCourse/:id').delete(varifyJwt,deleteCourse)
 
 router.route('/course/:couserId/add-lecture').post(varifyJwt,upload.any(),addLectureHandler)

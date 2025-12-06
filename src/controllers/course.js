@@ -18,13 +18,17 @@ const addCourseHandler=asyncHandler(async(req,res)=>{
    if(price<0 || price === undefined){
       throw new apiError(400, "Price must be > 0");
    }
-
-   const imageLocalPath = req.file?.path;
+   
+   console.log(req.file)
+   
+  let imageLocalPath = req.file?.path;
+   
    if (!imageLocalPath) { 
      throw new apiError(400, "Image file is required (field name: image)");
    }
    
    const user =await User.findById(req.user._id).select('-password -refreshToken')
+
    if(user.role==='student'){
       throw new apiError(401,"Student cann't get access to add course")
    }
@@ -35,6 +39,7 @@ const addCourseHandler=asyncHandler(async(req,res)=>{
    }
 
    const adminId=process.env.ADMIN_ID;
+
    const createCourse = await Course.create({
      title,
      description,
@@ -45,6 +50,7 @@ const addCourseHandler=asyncHandler(async(req,res)=>{
    })
 
    const findCourse = await Course.findById(createCourse._id);
+
    if (!findCourse) {
      throw new apiError(500, "Something went wrong while creating the course");
    }
@@ -57,6 +63,7 @@ const addCourseHandler=asyncHandler(async(req,res)=>{
 
 const updatecourseInfo=asyncHandler(async(req,res)=>{
   const allfeilds = ["title","description","price"];
+
   const updatefeilds = {};
   try {
     const body = req.body || {};
@@ -66,10 +73,13 @@ const updatecourseInfo=asyncHandler(async(req,res)=>{
         updatefeilds[info] = body[info];
       }
     })
+
     const objectLength = Object.keys(updatefeilds).length;
+
     if (objectLength === 0) {
       throw new apiError(400, "No fields provided to update!");
     }
+
     const course = await Course.findByIdAndUpdate(
       req.params.id,
       {   
@@ -80,9 +90,11 @@ const updatecourseInfo=asyncHandler(async(req,res)=>{
       },
       { new: true }
     )
+
     return res.status(200).json(
       new apiResponse(200, course, "Information update successfully")
     )
+
   } catch (error) {
     throw new apiError(error.statusCode || 500, error.message);
   }
@@ -95,22 +107,31 @@ const updateImage=asyncHandler(async(req,res)=>{
    //then update user by req.user?._id
    //return res
   const id = req.params.id;
-   const imageLocalPath=req.file?.path;
-   if(!imageLocalPath){
+
+  let imageLocalPath=req.file?.path;
+   
+  if(!imageLocalPath){
       throw new apiError(400,"Image file is not found!");
    }
+   
   const Coursefind = await Course.findById(id);
+  
    if(!Coursefind?.image){
       throw new apiError(400,"Image file is missing in DB!")
    }
-   const deleteImage=deleteOnCloudinary(Coursefind.image);
+
+  const deleteImage = await deleteOnCloudinary(Coursefind.image);
+
    if(!deleteImage){
        throw new apiError(400, 'Failed to delete previous image from Cloudinary');
    }
+
    const image=await uploadOnCloudinary(imageLocalPath);
+
    if(!image.url){
       throw new apiError(400,"Image file is missing!")
    }
+
   const course = await Course.findByIdAndUpdate(
     id,
      {
@@ -123,10 +144,12 @@ const updateImage=asyncHandler(async(req,res)=>{
        new:true
      }
    )
+
    return res.status(200)
    .json(
      new apiResponse(200,course,"Image update successfully!")
    )
+   
 })
 
 const deleteCourse=asyncHandler(async(req,res)=>{
@@ -224,7 +247,7 @@ const updateResource=asyncHandler(async(req,res)=>{
    if(!lacturefind?.resource){
       throw new apiError(400,"Resource file is missing in DB!")
    }
-   const deleteResourse=deleteOnCloudinary(lacturefind.image);
+  const deleteResourse = await deleteOnCloudinary(lacturefind.resource);
    if(!deleteResourse){
        throw new apiError(400, 'Failed to delete previous resource from Cloudinary');
    }    

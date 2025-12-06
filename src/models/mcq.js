@@ -10,7 +10,7 @@ const mcqSchema=new Schema({
      type:String,
      required:true
    },
-   option:[
+   options:[
     { 
       type:String,
       required:true

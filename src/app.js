@@ -22,11 +22,13 @@ app.use(cookieParser())
 
 //router import
 import userRouter from './routes/user.js'
-import instructorRouter from './routes/course.js'
+import courseRouter from './routes/course.js'
 import studentRouter from './routes/student.js'
+import instructorRouter from './routes/instuctor.js'
 //router define
 
 app.use('/api/v1/user',userRouter);
+app.use('/api/v1/course',courseRouter)
 app.use('/api/v1/instructor',instructorRouter);
 app.use('/api/v1/student',studentRouter)
 

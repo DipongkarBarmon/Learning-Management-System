@@ -22,17 +22,12 @@ const courseSchema=new Schema({
         type:mongoose.Schema.Types.ObjectId, 
         ref:"user"
         },
-        status: { 
-            type: String,
-            enum: ["pending", "approved", "rejected"],
-            default: "pending"
-         }
+      status: { 
+         type: String,
+         enum: ["pending", "approved", "rejected"],
+         default: "pending"
+      }
     }],
-   //  lectures:[{ 
-   //      type:mongoose.Schema.Types.ObjectId,
-   //      ref:"lecture" 
-   //    }],
-
    createdBy:{
      type:Schema.Types.ObjectId,
      ref:"user"
@@ -40,6 +35,10 @@ const courseSchema=new Schema({
    adminId:{
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
+   },
+   totalEnrollment:{
+      type:Number,
+      default:0
    }
 },{timestamps:true})
 

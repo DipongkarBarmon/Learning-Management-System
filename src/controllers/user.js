@@ -45,9 +45,12 @@ const register=asyncHandler(async(req,res)=>{
           throw new apiError(409,"User already exists");
       }
 
-      // avatar uploaded via Multer single('avatar') => available at req.file.path
-
-      const avatarLocalPath=req.file?.path;
+      // Support both single-field and any-field multer setups
+      let avatarLocalPath = req.file?.path;
+      if (!avatarLocalPath && Array.isArray(req.files)) {
+        const avatarFile = req.files.find((f) => f.fieldname === 'avatar');
+        avatarLocalPath = avatarFile?.path;
+      }
 
       //const coverImageLocalPath=req.files?.coverImage[0]?.path;
       // console.log(avaterLocalPath)
@@ -162,7 +165,7 @@ const logoutUser=asyncHandler(async(req,res)=>{
        httpOnly:true,
        secure:true
      }
-    // return res.clearCookie('accessToken',options).render('homepage')
+     
      return res.status(200)
      .clearCookie('accessToken',options)
      .json(new apiResponse(200,{},"User logout successfully"))
@@ -211,6 +214,7 @@ const refreshAccessToken=asyncHandler(async(req,res)=>{
 const changeCurrentPassword=asyncHandler(async(req,res)=>{
     const {oldPassword,newPassword}=req.body
     const user=await User.findById(req.user._id);
+    
     const isPosswordValid=user.isPasswordCorrect(oldPassword);
     if(!isPosswordValid){
        throw new apiError(401,"Invalid old password")
@@ -222,13 +226,7 @@ const changeCurrentPassword=asyncHandler(async(req,res)=>{
        new apiResponse(200,{},"Password change Successfully!")
     )
 })
-// const getCourentUser=asyncHandler(async(req,res)=>{
-//     return res.status(200)
-//     .json(
-//       new apiResponse(200,req.user,"Cuttent user fatch successfully!")
-//     )
-// })
-
+ 
 const updateAccountDetails=asyncHandler(async(req,res)=>{
     
    //get details from body
@@ -237,9 +235,11 @@ const updateAccountDetails=asyncHandler(async(req,res)=>{
    //return res
     
     const {fullname,email}=req.body;
+
     if(!fullname || !email){
        throw new apiError(400,"fullname and email are required!");
     }
+
     const user=await User.findByIdAndUpdate(
        req.user?._id,
        {
@@ -252,6 +252,7 @@ const updateAccountDetails=asyncHandler(async(req,res)=>{
          new:true
        }
     ).select('-password -refreshToken')
+
     return res.status(200)
     .json(
       new apiResponse(200,user,"fullname and email update successfully")
@@ -265,32 +266,46 @@ const updateUserAvater=asyncHandler(async(req,res)=>{
    //then update user by req.user?._id
    //return res
    
-   const avaterLocalPath=req.file?.path;
-   if(!avaterLocalPath){
+  let avatarLocalPath = req.file?.path;
+
+  if (!avatarLocalPath && Array.isArray(req.files)) {
+    const avatarFile = req.files.find((f) => f.fieldname === 'avatar');
+    avatarLocalPath = avatarFile?.path;
+  }
+
+  if(!avatarLocalPath){
       throw new apiError(400,"Avater file is not found!");
    }
+
    const userfind=await User.findById(req.user?._id);
-   if(!userfind?.avater){
+
+   if(!userfind?.avatar){
       throw new apiError(400,"Avater file is missing in DB!")
    }
-   const deleteAvater=deleteOnCloudinary(userfind.avater);
-   if(!deleteAvater){
-       throw new apiError(400, 'Failed to delete previous avatar from Cloudinary');
+
+   const deleteAvatar = await deleteOnCloudinary(userfind.avatar);
+
+   if(!deleteAvatar){
+      throw new apiError(400, 'Failed to delete previous avatar from Cloudinary');
    }
-   const avater=await uploadOnCloudinary(avaterLocalPath);
-   if(!avater.url){
+
+   const avatar=await uploadOnCloudinary(avatarLocalPath);
+
+   if(!avatar.url){
       throw new apiError(400,"Avater file is missing!")
    }
+
    const user =await User.findByIdAndUpdate(
      req.user?._id,
      {
       $set:{
-        avater:avater.url
+        avatar:avatar.url
       }
      },{
        new:true
      }
    ).select('-password -refreshToken')
+
    return res.status(200)
    .json(
      new apiResponse(200,user,"Avater update successfully!")

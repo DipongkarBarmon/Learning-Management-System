@@ -14,21 +14,21 @@ const router=Router();
 
 
 router.route('/register').post(
-  upload.single('avatar'),
+  upload.any(),
   register)
 
 
-router.route('/login').post(loginUser)
+router.route('/login').post(upload.none(),loginUser)
 
-router.route('/logout').get(varifyJwt,logoutUser)
+router.route('/logout').post(varifyJwt,logoutUser)
 
 router.route('/refesh-token').post(refreshAccessToken)
 
-router.route('/Updata-Password').post(varifyJwt,changeCurrentPassword)
+router.route('/update-password').post(varifyJwt,upload.none(),changeCurrentPassword)
 
-router.route('/update-account').post(varifyJwt,updateAccountDetails)
+router.route('/update-account').post(varifyJwt,upload.none(),updateAccountDetails)
 
-router.route('/change-profile').post(varifyJwt,upload.single('avatar'),updateUserAvater)
+router.route('/change-profile').post(varifyJwt,upload.any(),updateUserAvater)
 
  
 export default router;

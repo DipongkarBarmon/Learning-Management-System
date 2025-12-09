@@ -40,17 +40,9 @@ const userSchema=new Schema({
     refreshToken:{
         type:String
     },
-    accountNumber:{
-      type:Number,
-       
-    },
-    secretKey:{
-       type:String,
-        
-    },
-    balance:{
-      type:Number,
-      default:0
+    bankAccountCreated:{
+       type:Boolean,
+       default:false,
     }
 },{timestamps:true});
 

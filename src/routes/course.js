@@ -30,7 +30,7 @@ router.route('/course/updateLectureResource').patch(varifyJwt,upload.single('res
 // router.route('/course/deleteLecture').delete(varifyJwt,deleteLecture)
 
 
-router.route("/course/enrolled/:id").post(varifyJwt,toEnrolledCourse)
+router.route("/enrolled/:id").post(varifyJwt,upload.none(),toEnrolledCourse)
 
 
 export default router;

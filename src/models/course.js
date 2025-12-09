@@ -25,7 +25,7 @@ const courseSchema=new Schema({
       status: { 
          type: String,
          enum: ["pending", "approved", "rejected"],
-         default: "pending"
+         default:null
       }
     }],
    createdBy:{

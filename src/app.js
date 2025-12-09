@@ -25,11 +25,12 @@ import userRouter from './routes/user.js'
 import courseRouter from './routes/course.js'
 import studentRouter from './routes/student.js'
 import instructorRouter from './routes/instuctor.js'
+import bankRouter from './routes/bank.js'
 //router define
 
 app.use('/api/v1/user',userRouter);
 app.use('/api/v1/course',courseRouter)
 app.use('/api/v1/instructor',instructorRouter);
 app.use('/api/v1/student',studentRouter)
-
+app.use('/api/v1/bank',bankRouter)
 export {app};

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {getEnrolledCourse,
   allNotEnrolledCourse,
+  getPendingCourse
   
 } from '../controllers/student.js'
 
@@ -11,7 +12,7 @@ const router=Router()
 router.route('/my-course').get(varifyJwt,upload.none(),getEnrolledCourse)
 router.route('/availabe-course').get(varifyJwt,upload.none() ,allNotEnrolledCourse)
 
- 
+ router.route('/pending-courses').get(varifyJwt,upload.none() ,getPendingCourse)
 
 
 export default router;

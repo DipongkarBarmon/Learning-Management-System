@@ -12,7 +12,7 @@ const getEnrolledCourse=asyncHandler(async(req,res)=>{
          studentsEnrolled:{
           $elemMatch:{
               studentId:studentId,
-              status:'accepted'
+              status:'approved'
           }
          }
       })

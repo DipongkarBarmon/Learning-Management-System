@@ -5,7 +5,10 @@ import { apiError } from "../utils/apiError.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import { Lecture } from "../models/lacture.js";
 import { User } from "../models/user.js";
+import { Bank } from "../models/bank.js";
 import bcrypt from 'bcrypt'
+import { Transaction } from "../models/transaction.js";
+import { Performance } from "../models/performance.js";
 
 
 const addCourseHandler=asyncHandler(async(req,res)=>{
@@ -353,33 +356,128 @@ const updateResource=asyncHandler(async(req,res)=>{
 // });
 
 const toEnrolledCourse=asyncHandler(async(req,res)=>{
-      const courseId = req.params.id || req.params.courseId;
-      const {secretKey}=req.body
-      if(!secretKey){
-        throw new apiError(400,"Secret key is required!")
-      }
-      const user=await User.findById(req.user._id).select('-password -refreshToken')
-      if(!user){
-         throw new apiError(404,"User is not found");
-      }
-      const isTrue=bcrypt.compare(user.secretKey,secretKey)
-      if(!isTrue){
-           throw new apiError(400,"Secret key is not valid!")
-      }
-      const course = await Course.findById(courseId);
-      if(!course){
-         throw new apiError(404,"Course is not found")
-      }
-      course.studentsEnrolled.push({
-        studentId:req.user._id,
-        status:'pending'
+
+  const courseId=req.params.id||req.params.courseId;
+
+  const {provider,accountNumber,secretKey}=req.body;
+
+  if(!provider||!accountNumber||!secretKey){
+     throw new apiError(400,"Provider, Account Number and Secret Key are required!");
+  }
+
+  const user=await User.findById(req.user._id).select("-password -refreshToken");
+
+  if(!user){ 
+    throw new apiError(404,"User not found");
+  }
+
+  const userbank=await Bank.findOne({userId:req.user._id});
+
+  if(!userbank){
+   throw new apiError(400,"Bank account not found!");
+  }
+    
+  console.log(userbank.accountNumber)
+  console.log(accountNumber)
+  if(userbank.accountNumber!==accountNumber){
+    throw new apiError(400,"Account Number is not valid!");
+  }
+
+  const isTrue=await bcrypt.compare(secretKey,userbank.secretKey);
+
+  if(!isTrue){
+     throw new apiError(400,"Secret key is not valid!");
+  }
+  const course=await Course.findById(courseId);
+
+  if(!course){
+    throw new apiError(404,"Course is not found");
+  }
+
+  const alreadyEnrolled=course.studentsEnrolled.some(s=>s.studentId.toString()===req.user._id.toString());
+
+  if(alreadyEnrolled){
+    throw new apiError(400,"Student already enrolled");
+  }
+
+  if(userbank.balance<course.price) {
+    throw new apiError(400,"Balance is not sufficient!");
+  }
+  const admin=await User.findOne({role:"admin"});
+
+  if(!admin){
+     throw new apiError(400,"Admin not found!");
+  }
+
+  const adminbank=await Bank.findOne({userId:admin._id});
+
+  if(!adminbank){
+    throw new apiError(400,"Admin bank account not found!");
+  }
+
+  userbank.balance-=course.price; 
+  await userbank.save();
+
+  adminbank.balance+=course.price;
+  await adminbank.save();
+
+  course.studentsEnrolled.push({studentId:req.user._id,status:"pending"});
+
+  await course.save({validateBeforeSave:false});
+
+  const instructorId=course.createdBy;
+
+  const instructor=await User.findById(instructorId).select("-password -refreshToken");
+
+  if(!instructor) {
+    throw new apiError(400,"Instructor not found!");
+  }
+
+  let adminCommission=0, instructorShare=0;
+
+  if(admin._id.toString()===instructorId.toString()) {
+    adminCommission=course.price;
+  }
+  else {
+    adminCommission=0.2*course.price;
+   instructorShare=0.8*course.price;
+  }
+  const transaction=await Transaction.create({
+    adminId:admin._id,
+    courseId,
+    courseName:course.title,
+    instructorId,
+    instructorName:instructor.fullname,
+    instructorEmail:instructor.email,
+    userId:req.user._id,
+    userName:user.fullname,
+    userEmail:user.email,
+    totalAmount:course.price,
+    adminCommission,
+    instructorShare,
+    provider,status:"pending",
+    bankRefId:"REF-"+Date.now()
+  });
+
+  if(!transaction){
+    throw new apiError(400,"Transaction could not be created!");
+  }
+  const performance=await Performance.create({
+          courseId:courseId,
+          completeLectures:[],
+          studentId:req.user._id
       })
-      course.save({validateBeforeSave:false});
-      return res.status(200)
-      .json(
-        new apiResponse(200,"Secret key matched Student stutas update successfully!")
-      )
-})
+  
+  if(!performance){
+     throw new apiError(400,"Performance could not be created!");
+  }
+  return res.status(200)
+  .json(
+    new apiResponse(200,{course,transaction},"Student enrolled and transaction created!")
+  );
+});
+
+
 
 export {
    addCourseHandler,
@@ -391,5 +489,4 @@ export {
    updateResource,
    //deleteLecture,
    toEnrolledCourse
-
 }

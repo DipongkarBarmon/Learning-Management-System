@@ -11,17 +11,23 @@ import jwt from "jsonwebtoken"
 
 const generateAccessTokenAndRefreshToken=async(userId)=>{
    try {
-  const user=await User.findById(userId);
+
+       const user=await User.findById(userId);
+
        const accessToken=user.generateAccessToken()
+
        const refreshToken=user.generateRefreshToken()
+
        user.refreshToken=refreshToken
+
        user.save({validateBeforeSave:false})
+
        return {accessToken,refreshToken}
+
    } catch (error) {
       throw new apiError(500,"Something want wrong while generating refreshToken and accessToken")
    }
 }
-
 
 const register=asyncHandler(async(req,res)=>{
      //get user details from frontent
@@ -99,7 +105,6 @@ const loginUser=asyncHandler(async(req,res)=>{
      const {email,password}=req.body
      //console.log("Email is ",email)
 
-
      if(!email){
        throw new apiError(400,"Email is required!")
      }
@@ -109,9 +114,7 @@ const loginUser=asyncHandler(async(req,res)=>{
      }
      
       const isPasswordValid=await user.isPasswordCorrect(password)
-      // console.log(password),
-      // console.log(typeof(password))
-
+      
      if(!isPasswordValid){
       throw new apiError(401,"Invalid user password")
      }
@@ -119,22 +122,15 @@ const loginUser=asyncHandler(async(req,res)=>{
      const {accessToken,refreshToken}=await generateAccessTokenAndRefreshToken(user._id);
 
      const loggedInUser=await User.findById(user._id).select("-password -refreshToken")
+
      const options={
        httpOnly:true,
        secure:true
      }
+
       res.cookie('accessToken',accessToken,options)
      .cookie('refreshToken',refreshToken,options)
-     
-    //  if(loggedInUser.role==='student'){
-    //    return res.render('homepage',{
-    //       user:loggedInUser
-    //    })
-    //  }else{
-    //       return res.render('instructorpage',{
-    //       user:loggedInUser
-    //    })
-    //  }
+   
      return res.status(200)
      .cookie('accessToken',accessToken,options)
      .cookie('refreshToken',refreshToken,options)
@@ -268,10 +264,10 @@ const updateUserAvater=asyncHandler(async(req,res)=>{
    
   let avatarLocalPath = req.file?.path;
 
-  if (!avatarLocalPath && Array.isArray(req.files)) {
-    const avatarFile = req.files.find((f) => f.fieldname === 'avatar');
-    avatarLocalPath = avatarFile?.path;
-  }
+  // if (!avatarLocalPath && Array.isArray(req.files)) {
+  //   const avatarFile = req.files.find((f) => f.fieldname === 'avatar');
+  //   avatarLocalPath = avatarFile?.path;
+  // }
 
   if(!avatarLocalPath){
       throw new apiError(400,"Avater file is not found!");
@@ -320,7 +316,6 @@ export {
   logoutUser,
   refreshAccessToken,
   changeCurrentPassword,
-  // getCourentUser,
   updateAccountDetails,
   updateUserAvater,
 }

@@ -177,7 +177,14 @@ const addLectureHandler=asyncHandler(async(req,res)=>{
     if (!title || !description ||!resourseType) {
        throw new apiError(400, "All fields are required: title, description");
     }
+    
+    const course = await Course.findById(courseId);
 
+    if(!course){
+        throw new apiError(401,"Course ID is invalid ")
+    }
+
+    
     const resourceLocalPath=req.file?.path;
 
     if(!resourceLocalPath){ 
@@ -194,12 +201,17 @@ const addLectureHandler=asyncHandler(async(req,res)=>{
         throw new apiError(401,"Student cann't get access to add course")
     }
     
-    const course = await Course.findById(courseId);
+    const courseOwner=await User.findOne({_id:course.createdBy});
 
-    if(!course){
-        throw new apiError(401,"Course ID is invalid ")
+    if(!courseOwner){
+       throw new apiError(404,"Course owner id not found!");
+    }
+    
+    if(course.createdBy!==user._id&& courseOwner.role!=='admin'){
+        throw new apiError(400,"Unathorized!")
     }
 
+ 
     const resource=await uploadOnCloudinary(resourceLocalPath);
 
     if(!resource){
@@ -221,8 +233,43 @@ const addLectureHandler=asyncHandler(async(req,res)=>{
       throw new apiError(500,"Something was wrong while create Lecture!")
     }
     
+
+    let transaction;
+
+    if(course.createdBy!==user._id&& courseOwner.role==='admin'){
+        const instructorBank=await Bank.findOne({userId:user._id})
+        if(!instructorBank){
+           throw new apiError(404,"Instructor don't have bank account!")
+        }
+        const adminbank=await Bank.findOne({userId:course.createdBy})
+        if(!adminbank){
+           throw new apiError(404,"Amin don't have bank account!")
+        }
+
+        instructorBank.balance+=100;
+        adminbank.balance-=100;
+        instructorBank.save({validateBeforeSave:false})
+        adminbank.save({validateBeforeSave:false})
+
+        transaction=await Transaction.create({
+          adminId:courseOwner._id,
+          courseId,
+          courseName:course.title,
+          instructorId:user._id,
+          instructorName:user.fullname,
+          instructorEmail:user.email,
+          userId:courseOwner._id,
+          userName:courseOwner.fullname,
+          userEmail:courseOwner.email,
+          totalAmount:100,
+          adminCommission:0,
+          instructorShare:0,
+          provider:"bkash",
+          bankRefId:"REF-"+Date.now()
+      });
+    }
     res.status(201).json(
-        new apiResponse(200,findLecture,"Lecture create successfully!") 
+        new apiResponse(200,{findLecture,transaction},"Lecture create successfully!") 
     )
     
 })

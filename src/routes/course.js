@@ -21,11 +21,11 @@ router.route('/updatecourseImage/:id').patch(varifyJwt,upload.single('image'),up
 
 // router.route('/deleteCourse/:id').delete(varifyJwt,deleteCourse)
 
-router.route('/course/:couserId/add-lecture').post(varifyJwt,upload.single('resource'),addLectureHandler)
+router.route('/:couserId/add-lecture').post(varifyJwt,upload.single('resource'),addLectureHandler)
 
-router.route('/course/updateLectureInfo/:id').patch(varifyJwt,upload.none(),updateLactureInfo)
+router.route('/updateLectureInfo/:id').patch(varifyJwt,upload.none(),updateLactureInfo)
 
-router.route('/course/updateLectureResource').patch(varifyJwt,upload.single('resource'),updateResource)
+router.route('/updateLectureResource').patch(varifyJwt,upload.single('resource'),updateResource)
 
 // router.route('/course/deleteLecture').delete(varifyJwt,deleteLecture)
 

@@ -346,7 +346,14 @@ export const LearnerVideoPlayer = () => {
                   title: 'Quiz Passed!',
                   message: `You scored ${score.percentage}%`,
                 })
+              } else {
+                showToast({
+                  type: 'info',
+                  title: 'Quiz Completed',
+                  message: `You scored ${score.percentage}%. Try again to improve!`,
+                })
               }
+              setShowQuiz(false) // Close the quiz and go back to the video
             }}
           />
         ) : (

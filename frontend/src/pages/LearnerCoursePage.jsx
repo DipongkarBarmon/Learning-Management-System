@@ -238,7 +238,14 @@ export const LearnerCoursePage = () => {
                     title: 'Quiz Passed!',
                     message: `You scored ${score.percentage}%`,
                   })
+                } else {
+                  showToast({
+                    type: 'info',
+                    title: 'Quiz Completed',
+                    message: `You scored ${score.percentage}%. Try again to improve!`,
+                  })
                 }
+                setQuizLecture(null) // Close the quiz modal
               }}
             />
           </div>

@@ -25,7 +25,7 @@ export const HeroSection = ({ onExplore, featuredCourse, enrolledIds }) => {
 
             <h1 className="text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl leading-[1.1]">
               Master new skills with <br />
-              <span className="bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-700 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-cyan-600 via-blue-600 to-indigo-700 bg-clip-text text-transparent">
                 EduLearn
               </span>
             </h1>
@@ -100,7 +100,7 @@ export const HeroSection = ({ onExplore, featuredCourse, enrolledIds }) => {
             </div>
 
             {/* Floating Elements */}
-            <div className="absolute -bottom-6 -left-6 rounded-xl bg-white p-4 shadow-xl ring-1 ring-slate-900/5 animate-bounce duration-[3000ms]">
+            <div className="absolute -bottom-6 -left-6 rounded-xl bg-white p-4 shadow-xl ring-1 ring-slate-900/5 animate-bounce duration-3000">
               <div className="flex items-center gap-3">
                 <div className="flex -space-x-2">
                   {[1, 2, 3].map((i) => (

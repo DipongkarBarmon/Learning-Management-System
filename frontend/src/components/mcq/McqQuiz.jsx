@@ -123,9 +123,9 @@ export const McqQuiz = ({ lectureId, lectureName, onComplete }) => {
               <div key={mcq._id} className={`rounded-lg border p-4 ${isCorrect ? 'border-emerald-200 bg-emerald-50' : 'border-red-200 bg-red-50'}`}>
                 <div className="flex items-start gap-3">
                   {isCorrect ? (
-                    <CheckCircle className="mt-0.5 h-5 w-5 text-emerald-600 flex-shrink-0" />
+                    <CheckCircle className="mt-0.5 h-5 w-5 text-emerald-600 shrink-0" />
                   ) : (
-                    <XCircle className="mt-0.5 h-5 w-5 text-red-600 flex-shrink-0" />
+                    <XCircle className="mt-0.5 h-5 w-5 text-red-600 shrink-0" />
                   )}
                   <div className="flex-1">
                     <p className="font-medium text-slate-900">Q{idx + 1}: {mcq.question}</p>

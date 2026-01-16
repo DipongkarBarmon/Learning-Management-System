@@ -128,7 +128,7 @@ export const LearnerCoursePage = () => {
           {/* Generate Certificate Button */}
           {isAllLecturesComplete && (
             <Button
-              className="mt-2 w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+              className="mt-2 w-full bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
               onClick={handleGenerateCertificate}
               disabled={generatingCert}
             >

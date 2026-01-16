@@ -51,7 +51,7 @@ export const Header = () => {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <Link to="/" className="flex items-center gap-2 group">
-          <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700 text-white shadow-lg transition-transform group-hover:scale-105">
+          <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br from-cyan-600 via-blue-600 to-indigo-700 text-white shadow-lg transition-transform group-hover:scale-105">
             <span className="font-bold text-lg">EL</span>
             <div className="absolute inset-0 bg-white/20 opacity-0 transition-opacity group-hover:opacity-100" />
           </div>

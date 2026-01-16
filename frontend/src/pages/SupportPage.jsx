@@ -13,12 +13,12 @@ const SupportPage = () => {
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-slate-900 py-24 sm:py-32">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 opacity-90"></div>
+        <div className="absolute inset-0 bg-linear-to-br from-indigo-900 via-slate-900 to-slate-900 opacity-90"></div>
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')] bg-cover bg-center mix-blend-overlay opacity-20"></div>
 
         <div className="relative mx-auto max-w-7xl px-6 lg:px-8 text-center">
           <div className="mx-auto max-w-2xl">
-            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-300">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-6xl bg-clip-text text-transparent bg-linear-to-r from-white to-slate-300">
               We're here for you
             </h1>
             <p className="mt-6 text-lg leading-8 text-slate-300">
@@ -182,7 +182,7 @@ const SupportPage = () => {
                 alt="Support Team"
                 className="absolute inset-0 h-full w-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+              <div className="absolute inset-0 bg-linear-to-t from-slate-900/60 to-transparent"></div>
               <div className="absolute bottom-6 left-6 text-white">
                 <p className="font-semibold text-lg">The A-Team</p>
                 <p className="text-sm text-slate-200">Ready to assist you</p>

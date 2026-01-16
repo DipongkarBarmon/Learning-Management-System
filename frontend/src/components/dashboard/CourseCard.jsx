@@ -12,7 +12,7 @@ export const CourseCard = ({ course, onPrimary, primaryLabel, meta }) => (
       {course.image ? (
         <img src={course.image} alt={course.title} className="h-full w-full object-cover" />
       ) : (
-        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-100 to-cyan-100">
+        <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-indigo-100 to-cyan-100">
           <BookOpen className="h-10 w-10 text-indigo-400" />
         </div>
       )}

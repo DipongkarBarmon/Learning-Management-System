@@ -22,7 +22,7 @@ export const Footer = () => (
     <div className="mx-auto flex max-w-6xl flex-wrap gap-10 px-6 py-12">
       <div className="max-w-sm space-y-4">
         <div className="flex items-center gap-2 text-xl font-semibold">
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700 text-white font-bold">
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-linear-to-br from-cyan-600 via-blue-600 to-indigo-700 text-white font-bold">
             EL
           </span>
           EduLearn

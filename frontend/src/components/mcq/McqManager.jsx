@@ -213,7 +213,7 @@ export const McqManager = ({ lectureId, lectureName, isOpen, onClose }) => {
                                 }`}
                               >
                                 {opt.toLowerCase() === mcq.correctAns?.toLowerCase() && (
-                                  <CheckCircle className="h-4 w-4 text-emerald-600 flex-shrink-0" />
+                                  <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0" />
                                 )}
                                 <span className="font-medium mr-1">{String.fromCharCode(65 + optIdx)}.</span>
                                 {opt}

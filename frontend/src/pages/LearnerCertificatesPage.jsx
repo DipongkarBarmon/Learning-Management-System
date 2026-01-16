@@ -240,7 +240,7 @@ export const LearnerCertificatesPage = () => {
                 className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:shadow-lg"
               >
                 {/* Mini certificate preview */}
-                <div className="relative aspect-[1.5/1] overflow-hidden bg-gradient-to-br from-slate-50 to-white p-6">
+                <div className="relative aspect-[1.5/1] overflow-hidden bg-linear-to-br from-slate-50 to-white p-6">
                   {/* Decorative elements */}
                   <div className="absolute right-0 top-0 h-24 w-24 overflow-hidden">
                     <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-yellow-400/30"></div>

@@ -175,7 +175,7 @@ export const InstructorDashboard = () => {
               className="h-12 w-12 rounded-full object-cover"
             />
           ) : (
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 text-sm font-semibold text-white">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-cyan-500 to-blue-600 text-sm font-semibold text-white">
               {getInitials(enrollment.student?.fullname || enrollment.student?.username || 'Student')}
             </div>
           )}
@@ -274,7 +274,7 @@ export const InstructorDashboard = () => {
             </div>
             <div>
               <dt className="text-xs uppercase tracking-[0.2em] text-slate-400">Email</dt>
-              <dd className="font-medium text-slate-900 break-words">{user?.email}</dd>
+              <dd className="font-medium text-slate-900 wrap-break-word">{user?.email}</dd>
             </div>
           </dl>
           <Button

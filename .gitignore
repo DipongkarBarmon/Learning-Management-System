@@ -1,4 +1,69 @@
+# Basic
 node_modules/
 .env
+.env.test
+.env.production
 dist/
 build/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+coverage
+*.lcov
+.nyc_output
+
+# Grunt
+.grunt
+
+# Dependency directories
+node_modules/
+jspm_packages/
+web_modules/
+
+# TypeScript
+*.tsbuildinfo
+
+# Cache
+.npm
+.eslintcache
+.cache
+.parcel-cache
+
+# Framework builds
+.next
+out
+.nuxt
+.vuepress/dist
+
+# Serverless
+.serverless/
+
+# Misc
+*.tgz
+.yarn-integrity
+.tern-port
+.vscode-test
+
+# Yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*

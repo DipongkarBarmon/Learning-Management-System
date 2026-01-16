@@ -1,0 +1,57 @@
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+        <span class="fs-4">Student Panel</span>
+    </a>
+    <hr>
+
+    <ul class="nav nav-pills flex-column mb-auto">
+        
+        <!-- Home -->
+        <li class="nav-item">
+            <a href="/student/home" class="nav-link <%= active == 'home' ? 'active' : '' %>">
+                Home
+            </a>
+        </li>
+
+        <!-- All Courses -->
+        <li>
+            <a href="/courses" class="nav-link <%= active == 'courses' ? 'active' : '' %>">
+                All Courses
+            </a>
+        </li>
+
+        <!-- My Enrolled Courses (show only if student has enrollment) -->
+        <% if (enrolledCourseIds && enrolledCourseIds.length > 0) { %>
+        <li>
+            <a href="/my-courses" class="nav-link <%= active == 'my-courses' ? 'active' : '' %>">
+                My Courses
+            </a>
+        </li>
+        <% } %>
+
+        <!-- Account -->
+        <li>
+            <a href="/student/profile" class="nav-link <%= active == 'profile' ? 'active' : '' %>">
+                Profile
+            </a>
+        </li>
+
+    </ul>
+
+    <hr>
+
+    <div class="dropdown">
+        <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+            <img src="<%= user.profilePic %>" alt="" width="32" height="32" class="rounded-circle me-2">
+            <strong><%= user.name %></strong>
+        </a>
+
+        <ul class="dropdown-menu text-small shadow">
+            <li><a class="dropdown-item" href="/student/settings">Settings</a></li>
+            <li><a class="dropdown-item" href="/student/profile">Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/logout">Logout</a></li>
+        </ul>
+    </div>
+
+</div>

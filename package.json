@@ -1,0 +1,17 @@
+{
+  "name": "learning-management-system",
+  "version": "1.0.0",
+  "description": "Full-stack Learning Management System",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd Backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "npm install && cd Backend && npm install && cd ../frontend && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": ["lms", "education", "fullstack"],
+  "author": "",
+  "license": "ISC"
+}

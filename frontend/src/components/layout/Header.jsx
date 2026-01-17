@@ -55,7 +55,7 @@ export const Header = () => {
             <span className="font-bold text-lg">EL</span>
             <div className="absolute inset-0 bg-white/20 opacity-0 transition-opacity group-hover:opacity-100" />
           </div>
-          <span className="text-xl font-bold tracking-tight text-slate-900">EduLearn</span>
+          <span className="text-xl font-bold tracking-tight text-slate-900">Learning Management System</span>
         </Link>
 
         <nav className="hidden gap-8 md:flex items-center">

@@ -60,7 +60,7 @@ export const LoginPage = () => {
     <div className="mx-auto flex max-w-lg flex-col gap-6 px-6 py-12">
       <div className="text-center">
         <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Access</p>
-        <h1 className="text-3xl font-semibold text-slate-900">Sign in to EduLearn</h1>
+        <h1 className="text-3xl font-semibold text-slate-900">Sign in to LMS ORG</h1>
         <p className="mt-2 text-sm text-slate-500">Choose your role and continue learning.</p>
       </div>
 

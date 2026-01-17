@@ -60,7 +60,7 @@ export const SignupPage = () => {
     <div className="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-12">
       <div className="text-center">
         <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Create account</p>
-        <h1 className="text-3xl font-semibold text-slate-900">Join EduLearn today</h1>
+        <h1 className="text-3xl font-semibold text-slate-900">Join LMS ORG today</h1>
         <p className="mt-2 text-sm text-slate-500">Choose a role and complete the secure signup form.</p>
       </div>
 

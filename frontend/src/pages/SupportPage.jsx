@@ -50,7 +50,7 @@ const SupportPage = () => {
             </div>
             <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Community First</h2>
             <p className="mt-4 text-lg text-slate-600">
-              At EduLearn, we believe learning is a journey best taken together. Our support isn't just about fixing bugs; it's about ensuring you have the resources and encouragement to reach your goals.
+              At LMS ORG, we believe learning is a journey best taken together. Our support isn't just about fixing bugs; it's about ensuring you have the resources and encouragement to reach your goals.
             </p>
           </div>
         </div>
@@ -69,7 +69,7 @@ const SupportPage = () => {
               Perfect for detailed inquiries. We aim to respond within 24 hours.
             </p>
             <a href="mailto:support@edulearn.com" className="text-indigo-600 font-medium hover:text-indigo-500 flex items-center gap-2">
-              support@edulearn.com
+              support@LMSORG.com
             </a>
           </div>
 

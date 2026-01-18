@@ -204,6 +204,16 @@ export const AdminDashboard = () => {
           >
             Instructors ({allInstructors.length})
           </button>
+          <button
+            onClick={() => setActiveTab('transactions')}
+            className={`border-b-2 pb-3 text-sm font-medium transition-colors ${
+              activeTab === 'transactions'
+                ? 'border-cyan-600 text-cyan-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            Transactions ({transactions.length})
+          </button>
         </div>
       </div>
 
@@ -211,31 +221,52 @@ export const AdminDashboard = () => {
       {activeTab === 'courses' && (
         <DashboardSection title="All Courses" description="Complete list of courses on the platform.">
           {allCourses.length > 0 ? (
-            <div className="space-y-3">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {allCourses.map((course, index) => (
-                <div key={index} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="flex items-start justify-between">
-                    <div className="flex gap-4">
-                      {course.image && (
-                        <img src={course.image} alt={course.title} className="h-16 w-24 rounded-lg object-cover" />
-                      )}
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-slate-900">{course.title}</h4>
-                        <p className="mt-1 text-sm text-slate-600">{course.description?.substring(0, 100)}...</p>
-                        <div className="mt-2 flex items-center gap-3 text-xs text-slate-500">
-                          <span>Category: {course.category || 'N/A'}</span>
-                          <span>•</span>
-                          <span>Level: {course.level || 'N/A'}</span>
-                          <span>•</span>
-                          <span>Enrolled: {course.studentsEnrolled?.length || 0}</span>
-                        </div>
+                <div key={index} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:shadow-md">
+                  <div className="relative h-40 overflow-hidden">
+                    {course.image ? (
+                      <img 
+                        src={course.image} 
+                        alt={course.title} 
+                        className="h-full w-full object-cover transition-transform group-hover:scale-105" 
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cyan-500 to-blue-600">
+                        <span className="text-4xl font-bold text-white/30">{course.title?.charAt(0) || 'C'}</span>
                       </div>
+                    )}
+                    <div className="absolute right-2 top-2">
+                      <span className="rounded-full bg-white/90 px-3 py-1 text-lg font-bold text-slate-900 shadow-sm">
+                        ${course.price}
+                      </span>
                     </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-slate-900">${course.price}</p>
-                      <p className="mt-1 text-xs text-slate-500">
-                        Instructor: {course.createdBy?.fullname || 'Unknown'}
-                      </p>
+                  </div>
+                  <div className="p-4">
+                    <h4 className="font-semibold text-slate-900 line-clamp-1">{course.title}</h4>
+                    <p className="mt-1 text-sm text-slate-600 line-clamp-2">{course.description || 'No description'}</p>
+                    <div className="mt-3 flex items-center gap-2">
+                      {course.createdBy?.avatar ? (
+                        <img 
+                          src={course.createdBy.avatar} 
+                          alt={course.createdBy.fullname} 
+                          className="h-6 w-6 rounded-full object-cover" 
+                        />
+                      ) : (
+                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-purple-100 text-xs font-semibold text-purple-800">
+                          {course.createdBy?.fullname?.charAt(0) || 'I'}
+                        </div>
+                      )}
+                      <span className="text-sm text-slate-600">{course.createdBy?.fullname || 'Unknown'}</span>
+                    </div>
+                    <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
+                      <span className="flex items-center gap-1">
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                        </svg>
+                        {course.studentsEnrolled?.filter(s => s.status === 'approved').length || 0} enrolled
+                      </span>
+                      <span className="rounded-full bg-slate-100 px-2 py-0.5">{course.category || 'General'}</span>
                     </div>
                   </div>
                 </div>
@@ -325,86 +356,10 @@ export const AdminDashboard = () => {
         </DashboardSection>
       )}
 
-      {/* Tab Content - Pending Transactions */}
-      {activeTab === 'pending' && (
-        <DashboardSection 
-          title="Pending Transactions" 
-          description="Transactions awaiting instructor validation. Money is currently held in admin wallet."
-        >
-          {transactions.length === 0 ? (
-            <div className="rounded-2xl border border-blue-200 bg-blue-50 p-6 text-center">
-              <p className="mb-2 font-semibold text-blue-900">Transaction Monitoring Not Available</p>
-              <p className="text-sm text-blue-700">
-                The backend endpoint <code className="rounded bg-blue-100 px-2 py-1 text-xs">/api/v1/bank/all-transactions</code> needs to be implemented to view platform-wide transactions.
-              </p>
-              <p className="mt-3 text-xs text-blue-600">
-                Admin can track their wallet balance above. Transactions are processed when instructors approve enrollments.
-              </p>
-            </div>
-          ) : pendingTransactions.length > 0 ? (
-            <div className="space-y-3">
-              {pendingTransactions.map((tx, index) => (
-                <div key={index} className="rounded-2xl border border-yellow-200 bg-yellow-50 p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="mb-2 flex items-center gap-2">
-                        <h4 className="font-semibold text-slate-900">
-                          {tx.courseName || tx.courseId?.title || 'Course'}
-                        </h4>
-                        <span className="inline-flex rounded-full bg-yellow-200 px-2 py-0.5 text-xs font-medium text-yellow-800">
-                          PENDING VALIDATION
-                        </span>
-                      </div>
-                      <p className="mb-1 text-sm text-slate-600">
-                        Student: {tx.userName || tx.userId?.fullname || tx.userId?.username || 'Unknown'}
-                      </p>
-                      <p className="mb-1 text-sm text-slate-600">
-                        Instructor: {tx.instructorName || tx.instructorId?.fullname || 'Unknown'}
-                      </p>
-                      <p className="text-xs text-slate-400">
-                        {new Date(tx.createdAt).toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-slate-500">Held Amount</p>
-                      <p className="text-2xl font-bold text-slate-900">${tx.amount}</p>
-                      <div className="mt-2 text-xs text-slate-600">
-                        <p>→ Instructor (80%): ${(tx.amount * 0.8).toFixed(2)}</p>
-                        <p>→ Admin (20%): ${(tx.amount * 0.2).toFixed(2)}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="mt-3 text-xs italic text-yellow-700">
-                    Waiting for instructor to validate and approve this enrollment.
-                  </p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-slate-500">No pending transactions.</p>
-          )}
-        </DashboardSection>
-      )}
-
       {/* Tab Content - All Transactions */}
-      {activeTab === 'all-transactions' && (
-        <DashboardSection title="All Platform Transactions" description="Complete transaction history across the platform.">
-          {transactions.length === 0 ? (
-            <div className="rounded-2xl border border-blue-200 bg-blue-50 p-6 text-center">
-              <p className="mb-2 font-semibold text-blue-900">Transaction History Not Available</p>
-              <p className="text-sm text-blue-700">
-                The backend endpoint <code className="rounded bg-blue-100 px-2 py-1 text-xs">/api/v1/bank/all-transactions</code> needs to be implemented to view platform-wide transactions.
-              </p>
-              <p className="mt-3 text-xs text-blue-600">
-                Monitor your admin wallet balance above. When instructors approve student enrollments:
-              </p>
-              <ul className="mt-2 space-y-1 text-left text-xs text-blue-600">
-                <li>• Student payment enters admin wallet</li>
-                <li>• 80% transfers to instructor upon approval</li>
-                <li>• 20% commission stays in admin wallet</li>
-              </ul>
-            </div>
-          ) : (
+      {activeTab === 'transactions' && (
+        <DashboardSection title="All Platform Transactions" description="Complete transaction history across all courses.">
+          {transactions.length > 0 ? (
             <div className="space-y-3">
               {transactions.map((tx, index) => (
                 <div key={index} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -412,7 +367,7 @@ export const AdminDashboard = () => {
                     <div className="flex-1">
                       <div className="mb-2 flex items-center gap-2">
                         <h4 className="font-semibold text-slate-900">
-                          {tx.courseName || tx.courseId?.title || 'Course'}
+                          {tx.courseId?.title || tx.courseName || 'Course'}
                         </h4>
                         <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
                           tx.status === 'approved' 
@@ -421,33 +376,62 @@ export const AdminDashboard = () => {
                             ? 'bg-red-100 text-red-800'
                             : 'bg-yellow-100 text-yellow-800'
                         }`}>
-                          {tx.status?.toUpperCase()}
+                          {tx.status}
                         </span>
                       </div>
                       <p className="mb-1 text-sm text-slate-600">
-                        Student: {tx.userName || tx.userId?.fullname || tx.userId?.username || 'Unknown'}
+                        <span className="font-medium">Student:</span> {tx.userId?.fullname || tx.userName || 'Unknown'} ({tx.userId?.email || tx.userEmail || ''})
                       </p>
                       <p className="mb-1 text-sm text-slate-600">
-                        Instructor: {tx.instructorName || tx.instructorId?.fullname || 'Unknown'}
+                        <span className="font-medium">Instructor:</span> {tx.instructorId?.fullname || tx.instructorName || 'Unknown'} ({tx.instructorId?.email || tx.instructorEmail || ''})
                       </p>
                       <p className="text-xs text-slate-400">
                         {new Date(tx.createdAt).toLocaleString()}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-slate-500">Amount</p>
-                      <p className="text-2xl font-bold text-slate-900">${tx.amount}</p>
+                      <p className="text-sm text-slate-500">Total Amount</p>
+                      <p className="text-2xl font-bold text-slate-900">${(tx.totalAmount || 0).toFixed(2)}</p>
                       {tx.status === 'approved' && (
-                        <div className="mt-2 space-y-1 text-xs">
-                          <p className="text-green-600">Instructor: ${tx.instructorShare?.toFixed(2) || (tx.amount * 0.8).toFixed(2)}</p>
-                          <p className="text-purple-600">Admin: ${tx.adminCommission?.toFixed(2) || (tx.amount * 0.2).toFixed(2)}</p>
-                        </div>
+                        <>
+                          <p className="mt-1 text-xs text-slate-500">Admin Commission</p>
+                          <p className="text-lg font-semibold text-purple-600">
+                            ${(tx.adminCommission || 0).toFixed(2)}
+                          </p>
+                        </>
                       )}
                     </div>
                   </div>
+                  {tx.status === 'approved' && (
+                    <div className="mt-3 border-t border-slate-100 pt-3">
+                      <div className="grid grid-cols-3 gap-3 text-xs">
+                        <div>
+                          <p className="text-slate-500">Total Amount</p>
+                          <p className="font-medium text-slate-700">${(tx.totalAmount || 0).toFixed(2)}</p>
+                        </div>
+                        <div>
+                          <p className="text-slate-500">Admin Commission (20%)</p>
+                          <p className="font-medium text-purple-600">${(tx.adminCommission || 0).toFixed(2)}</p>
+                        </div>
+                        <div>
+                          <p className="text-slate-500">Instructor Share (80%)</p>
+                          <p className="font-medium text-green-600">${(tx.instructorShare || 0).toFixed(2)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {tx.status === 'pending' && (
+                    <div className="mt-3 border-t border-slate-100 pt-3">
+                      <p className="text-xs italic text-yellow-700">
+                        Waiting for instructor to validate and approve this enrollment.
+                      </p>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
+          ) : (
+            <p className="text-sm text-slate-500">No transactions yet.</p>
           )}
         </DashboardSection>
       )}

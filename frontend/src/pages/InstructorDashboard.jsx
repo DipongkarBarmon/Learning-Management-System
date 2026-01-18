@@ -152,14 +152,17 @@ export const InstructorDashboard = () => {
 
   const stats = useMemo(() => {
     const activeCourses = overview.courses.length
+    // Count only approved students
     const totalLearners = overview.courses.reduce(
-      (sum, course) => sum + (Array.isArray(course.studentsEnrolled) ? course.studentsEnrolled.length : 0),
+      (sum, course) => sum + (Array.isArray(course.studentsEnrolled) 
+        ? course.studentsEnrolled.filter(s => s.status === 'approved').length 
+        : 0),
       0,
     )
     return [
       { label: 'Live courses', value: activeCourses, format: 'number' },
       { label: 'Total learners', value: totalLearners, format: 'number' },
-      { label: 'Lifetime earnings', value: overview.totalEarnings, format: 'currency' },
+      { label: 'Lifetime earnings', value: overview.totalEarnings || 0, format: 'currency' },
       { label: 'Pending approvals', value: pendingEnrollments.length, format: 'number' },
     ]
   }, [overview, pendingEnrollments])
@@ -430,7 +433,7 @@ export const InstructorDashboard = () => {
                       <div className="flex-1">
                         <div className="mb-2 flex items-center gap-2">
                           <h4 className="font-semibold text-slate-900">
-                            {tx.courseId?.title || 'Course'}
+                            {tx.courseId?.title || tx.courseName || 'Course'}
                           </h4>
                           <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
                             tx.status === 'approved' 
@@ -443,7 +446,7 @@ export const InstructorDashboard = () => {
                           </span>
                         </div>
                         <p className="mb-1 text-sm text-slate-600">
-                          Student: {tx.userId?.fullname || tx.userId?.username || 'Unknown'}
+                          Student: {tx.userId?.fullname || tx.userName || 'Unknown'}
                         </p>
                         <p className="text-xs text-slate-400">
                           {new Date(tx.createdAt).toLocaleString()}
@@ -451,12 +454,12 @@ export const InstructorDashboard = () => {
                       </div>
                       <div className="text-right">
                         <p className="text-sm text-slate-500">Total Amount</p>
-                        <p className="text-2xl font-bold text-slate-900">${tx.amount}</p>
+                        <p className="text-2xl font-bold text-slate-900">${(tx.totalAmount || 0).toFixed(2)}</p>
                         {tx.status === 'approved' && (
                           <>
                             <p className="mt-1 text-xs text-slate-500">Your Share</p>
                             <p className="text-lg font-semibold text-green-600">
-                              ${(tx.amount * 0.8).toFixed(2)}
+                              ${(tx.instructorShare || 0).toFixed(2)}
                             </p>
                           </>
                         )}
@@ -467,11 +470,11 @@ export const InstructorDashboard = () => {
                         <div className="grid grid-cols-2 gap-3 text-xs">
                           <div>
                             <p className="text-slate-500">Admin Commission (20%)</p>
-                            <p className="font-medium text-slate-700">${(tx.amount * 0.2).toFixed(2)}</p>
+                            <p className="font-medium text-slate-700">${(tx.adminCommission || 0).toFixed(2)}</p>
                           </div>
                           <div>
                             <p className="text-slate-500">Instructor Share (80%)</p>
-                            <p className="font-medium text-green-600">${(tx.amount * 0.8).toFixed(2)}</p>
+                            <p className="font-medium text-green-600">${(tx.instructorShare || 0).toFixed(2)}</p>
                           </div>
                         </div>
                       </div>

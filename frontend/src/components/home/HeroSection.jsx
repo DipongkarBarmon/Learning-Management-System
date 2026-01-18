@@ -26,7 +26,7 @@ export const HeroSection = ({ onExplore, featuredCourse, enrolledIds }) => {
             <h1 className="text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl leading-[1.1]">
               Master new skills with <br />
               <span className="bg-linear-to-r from-cyan-600 via-blue-600 to-indigo-700 bg-clip-text text-transparent">
-                EduLearn
+                 LMS
               </span>
             </h1>
 

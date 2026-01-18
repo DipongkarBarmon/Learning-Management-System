@@ -179,7 +179,7 @@ export const CoursePage = () => {
         </div>
       </div>
 
-      <div className="mt-12">
+      {/* <div className="mt-12">
         <h2 className="text-2xl font-semibold text-slate-900">You may also like</h2>
         <div className="mt-6 grid gap-5 md:grid-cols-3">
           {related.map((item) => (
@@ -202,7 +202,7 @@ export const CoursePage = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
 
       <PurchaseCourseModal
         course={course}

@@ -9,12 +9,6 @@ const footerLinks = [
       { label: 'Signup', to: '/signup' },
     ],
   },
-  {
-    title: 'Support',
-    items: [
-      { label: 'Help Center', to: '/support' },
-    ],
-  },
 ]
 
 export const Footer = () => (
